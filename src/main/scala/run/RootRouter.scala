@@ -1,40 +1,42 @@
 package run
 
-import akka.http.scaladsl.model.StatusCodes
+import java.net.URL
+
+import akka.http.scaladsl.model.{StatusCodes, Uri}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import com.typesafe.scalalogging.LazyLogging
-import io.circe.generic.auto._
-import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
+
 import scala.concurrent.ExecutionContext
+import scala.util.{Failure, Success}
 
 class RootRouter(implicit executionContext: ExecutionContext) extends LazyLogging {
 
-  val routes: Route = handleExceptions(exceptionHandler){
+  val routes: Route = handleExceptions(exceptionHandler) {
     extractUri { uri =>
       extractMethod { method =>
-        logger.debug("{} {}", method.value, uri.toRelative.path)
+        logger.info("{} {}", method.value, uri.toRelative.path)
         ignoreTrailingSlash {
-          proxyRoutes
+          path("proxy") {
+            post {
+              extractRequest { entity =>
+                onComplete(Caller.proxyHttp(entity.entity, entity.headers)) {
+                  case Success(result) => complete(result)
+                  case Failure(exception) =>
+                    logger.error("Something broke during send request", exception)
+                    complete(StatusCodes.InternalServerError, exception)
+                }
+              }
+            }
+          }
         }
       }
     }
   }
 
   private def exceptionHandler: ExceptionHandler = ExceptionHandler {
-    case e: RepositoryError => complete(e.httpCode, e.response)
     case e: Exception =>
       logger.error("Exception: ", e)
-      complete(StatusCodes.InternalServerError)
-  }
-
-  private def proxyRoutes: Route = path("proxy") {
-     post {
-       extractRequestEntity { entity =>
-         val a = entity.httpEntity
-//         println(a.getDataBytes())
-         complete(s"Request entity content-type is ${entity.contentType}")
-       }
-     }
+      complete(StatusCodes.InternalServerError, e)
   }
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <property resource="logback.properties"/>
+
+  <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%date{HH:mm:ss.SSS} %logger{15} [%level] %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="soapproxy" level="DEBUG">
+    <appender name="soapproxy" class="ch.qos.logback.core.FileAppender">
+      <file>logs/${proxy}.log</file>
+      <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+        <pattern>%date{HH:mm:ss.SSS} %logger{15} [%level] %msg%n</pattern>
+      </encoder>
+    </appender>
+  </logger>
+
+  <root level="DEBUG">
+    <appender name="soapproxy" class="ch.qos.logback.core.FileAppender">
+      <file>logs/${instance_name}.log</file>
+      <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+        <pattern>%date{HH:mm:ss.SSS} %logger{15} [%level] %msg%n</pattern>
+      </encoder>
+    </appender>
+  </root>
+</configuration>
+

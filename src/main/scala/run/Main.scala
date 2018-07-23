@@ -6,9 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import AppContext._
 import scala.util.{Failure, Success}
 
-object Main extends LazyLogging {
-  def main(args: Array[String]) {
-
+object Main extends App with LazyLogging {
     try {
       val config = ConfigFactory.load()
       Http().bindAndHandle(router.routes, config.getString("http.host"), config.getInt("http.port")).onComplete {
@@ -25,6 +23,4 @@ object Main extends LazyLogging {
             sys.exit(-1)
         }
     }
-
-  }
 }
