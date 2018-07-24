@@ -15,12 +15,12 @@ object Caller extends LazyLogging {
 
   val config = ConfigFactory.load()
 
-  def proxyHttp(entityRq: RequestEntity, headersRq: immutable.Seq[HttpHeader]): Future[HttpResponse] = {
+  def proxyHttp(soapMsg: String, headersRq: immutable.Seq[HttpHeader]): Future[HttpResponse] = {
     val request = HttpRequest(
       HttpMethods.POST,
       uri = config.getString("http-proxy.path"),
       headers = headersRq,
-      entity = entityRq
+      entity = soapMsg
     )
     Http().singleRequest(request)
   }
