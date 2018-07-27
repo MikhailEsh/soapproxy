@@ -30,17 +30,20 @@ import java.util.Properties;
 
 public class SoapSign {
 
-    private String alias = "xws-security-client";
-    private String passphrase;
-    private File ksFile;
+    private final String alias;
+    private final String passphrase;
+    private final File ksFile;
+    private final int signatureValidityTime; // 1hour in seconds
 
-    public SoapSign(String passphrase) {
+    public SoapSign(String passphrase, String alias, int signatureValidityTime, File ksFile) throws FileNotFoundException {
         this.passphrase = passphrase;
-        this.ksFile = new File(System.getProperty("user.dir") + "/src/main/resources/client-keystore.jks");
+        this.alias = alias;
+        this.signatureValidityTime = signatureValidityTime;
+        this.ksFile = ksFile;
     }
 
     public String signSoapMessage(String message) throws Exception {
-        final int signatureValidityTime = 3600; // 1hour in seconds
+
 
         KeyStore keystore = KeyStore.getInstance("JKS");
         keystore.load(new FileInputStream(ksFile), passphrase.toCharArray());
