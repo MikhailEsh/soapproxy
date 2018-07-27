@@ -30,7 +30,9 @@ class RootRouter(soapSign :SoapSign, loader :LoaderFiles) extends LazyLogging {
               } ~ post {
               extractRequest { entity =>
                 onComplete(callProxy(entity)) {
-                  case Success(result) => complete(result)
+                  case Success(result) =>
+                    logger.info("Response successed received ")
+                    complete(result)
                   case Failure(exception) =>
                     logger.error("Something broke", exception)
                     exception match {
@@ -39,8 +41,6 @@ class RootRouter(soapSign :SoapSign, loader :LoaderFiles) extends LazyLogging {
                       case ex =>
                         complete(StatusCodes.InternalServerError, exception)
                     }
-
-
                 }
               }
             }
@@ -76,7 +76,7 @@ class RootRouter(soapSign :SoapSign, loader :LoaderFiles) extends LazyLogging {
       .map(f => {
         logger.debug(s"Message for sign $f")
         val singned = soapSign.signSoapMessage(f)
-        logger.debug(s"Message success signed $f")
+        logger.debug(s"Message success signed $singned")
         singned
       })
   }

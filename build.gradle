@@ -27,16 +27,12 @@ buildscript {
     }
 }
 
-//jar {
-//    manifest {
-//        attributes 'Main-Class': 'run.HttpWebServer'
-//    }
-//}
-
 task awesomeFunJar(type: OneJar) {
     mainClass = 'run.HttpWebServer'
     archiveName = 'soapproxy-one-jar.jar'
 }
+
+compileJava.options.encoding = 'UTF-8'
 
 dependencies {
     compile 'org.scala-lang:scala-library:2.12.6'

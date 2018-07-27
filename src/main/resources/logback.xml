@@ -8,7 +8,7 @@
     </encoder>
   </appender>
 
-  <logger name="soapproxy" level="DEBUG">
+  <logger name="soapproxy" level="INFO">
     <appender name="soapproxy" class="ch.qos.logback.core.FileAppender">
       <file>logs/${proxy}.log</file>
       <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -17,7 +17,7 @@
     </appender>
   </logger>
 
-  <root level="DEBUG">
+  <root level="INFO">
     <appender name="soapproxy" class="ch.qos.logback.core.FileAppender">
       <file>logs/${instance_name}.log</file>
       <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">

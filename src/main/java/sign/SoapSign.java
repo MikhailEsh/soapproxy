@@ -78,6 +78,10 @@ public class SoapSign {
         List<WSEncryptionPart> parts = new ArrayList<>();
         WSEncryptionPart timestampPart = new WSEncryptionPart("Timestamp", WSConstants.WSU_NS, "");
         WSEncryptionPart bodyPart = new WSEncryptionPart(WSConstants.ELEM_BODY, WSConstants.URI_SOAP11_ENV, "");
+        WSEncryptionPart actionPart = new WSEncryptionPart("Action", "http://www.w3.org/2005/08/addressing","");
+        WSEncryptionPart messageIDPart = new WSEncryptionPart("MessageID", "http://www.w3.org/2005/08/addressing","");
+        parts.add(actionPart);
+        parts.add(messageIDPart);
         parts.add(timestampPart);
         parts.add(bodyPart);
         builder.setParts(parts);
