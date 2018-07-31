@@ -75,8 +75,10 @@ class RootRouter(soapSign :SoapSign, loader :LoaderFiles) extends LazyLogging {
       .map(s => s.utf8String)
       .map(f => {
         logger.debug(s"Message for sign $f")
+        logger.info(s"Message success extracted")
         val singned = soapSign.signSoapMessage(f)
         logger.debug(s"Message success signed $singned")
+        logger.info(s"Message success signed")
         singned
       })
   }

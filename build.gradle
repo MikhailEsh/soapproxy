@@ -48,5 +48,4 @@ dependencies {
     compile 'org.slf4j:log4j-over-slf4j:1.7.13'
     compile 'org.apache.ws.security:wss4j:1.6.19'
     compile 'xalan:xalan:2.7.1'
-    testCompile 'org.scalatest:scalatest_2.12:3.0.4'
 }

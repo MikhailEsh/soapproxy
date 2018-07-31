@@ -7,7 +7,7 @@ import com.typesafe.config.{Config, ConfigFactory, ConfigParseOptions}
 case class LoaderFiles () {
   private val config: Config = {
     ConfigFactory.defaultApplication()
-    val myConfigFile = new File(System.getProperty("user.dir") + "." + File.separator + "application.conf")
+    val myConfigFile = new File(System.getProperty("user.dir") + File.separator + "application.conf")
     if (!myConfigFile.exists || myConfigFile.isDirectory) throw new FileNotFoundException("File application.conf Not Found")
     ConfigFactory.parseFileAnySyntax(myConfigFile, ConfigParseOptions.defaults)
   }
@@ -18,7 +18,7 @@ case class LoaderFiles () {
   val port: Int = config.getInt("http-host.port")
   val hostTarget: String = config.getString("http-target.host")
   val ksFile: File = {
-    val file = new File(System.getProperty("user.dir") + "." + File.separator + "client-keystore.jks")
+    val file = new File(System.getProperty("user.dir") + File.separator + "client-keystore.jks")
     if (!file.exists || file.isDirectory) throw new FileNotFoundException("File client-keystore.jks Not Found")
     file
   }
