@@ -5,6 +5,17 @@ import java.io.{File, FileNotFoundException}
 import com.typesafe.config.{Config, ConfigFactory, ConfigParseOptions}
 
 case class LoaderFiles () {
+
+  private var isDebugLog = false
+
+  def turnDebug(): Unit = {
+    this.synchronized {
+      isDebugLog = !isDebugLog
+    }
+  }
+
+  def getDebug(): Boolean = isDebugLog
+
   private val config: Config = {
     ConfigFactory.defaultApplication()
     val myConfigFile = new File(System.getProperty("user.dir") + File.separator + "application.conf")

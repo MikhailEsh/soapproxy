@@ -26,12 +26,29 @@ class RootRouter(soapSign :SoapSign, loader :LoaderFiles) extends LazyLogging {
             get {
               complete(StatusCodes.OK,
                 s"  Proxy host: ${loader.host}:${loader.port} " +
-                  s"\n Proxy target: ${loader.hostTarget}")
+                  s"\n Proxy target: ${loader.hostTarget}" +
+                  s"\n Debug Logger: ${loader.getDebug()}")
               } ~ post {
               extractRequest { entity =>
+                if (loader.getDebug()) {
+                  logger.info(s"Data sign parameter \n" +
+                    s"\n host: ${loader.host}:${loader.port}" +
+                    s"\n passfrase: ${loader.passfrase}" +
+                    s"\n Exist File: ${loader.ksFile.exists()}" +
+                    s"\n alias: ${loader.alias}"
+                  )
+                  logger.info(s"Request succeed get \n method: ${entity.method}" +
+                    s"\n uri: ${entity.uri}" +
+                    s"\n headers: ${entity.headers}" +
+                    s"\n body: ${entity.entity}"
+                  )
+                }
                 onComplete(callProxy(entity)) {
                   case Success(result) =>
                     logger.info("Response successed received ")
+                    if (loader.getDebug()) {
+                      logger.info(s"Body response: $result")
+                    }
                     complete(result)
                   case Failure(exception) =>
                     logger.error("Something broke", exception)
@@ -43,6 +60,10 @@ class RootRouter(soapSign :SoapSign, loader :LoaderFiles) extends LazyLogging {
                     }
                 }
               }
+            } ~ put {
+              loader.turnDebug()
+              complete(StatusCodes.OK,
+                s"  Debug Logger: ${loader.getDebug()}")
             }
           }
         }
@@ -63,6 +84,13 @@ class RootRouter(soapSign :SoapSign, loader :LoaderFiles) extends LazyLogging {
       headers = headersRq,
       entity = soapMsg
     )
+    if (loader.getDebug()) {
+      logger.info(s"Message parameter \n method: ${request.method}" +
+        s"\n uri: ${request.uri}" +
+        s"\n headers: ${request.headers}" +
+        s"\n body: ${request.entity}"
+      )
+    }
     Http().singleRequest(request)
   }
 
@@ -74,10 +102,14 @@ class RootRouter(soapSign :SoapSign, loader :LoaderFiles) extends LazyLogging {
       }
       .map(s => s.utf8String)
       .map(f => {
-        logger.debug(s"Message for sign $f")
+        if (loader.getDebug()) {
+          logger.info(s"Message prepare for sign $f")
+        }
         logger.info(s"Message success extracted")
         val singned = soapSign.signSoapMessage(f)
-        logger.debug(s"Message success signed $singned")
+        if (loader.getDebug()) {
+          logger.info(s"Message success signed body: $singned")
+        }
         logger.info(s"Message success signed")
         singned
       })
